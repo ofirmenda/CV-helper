@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --color-bg: #f5f4f0;
+    --color-bg: #f8f9fb;
     --color-surface: #ffffff;
     --color-ink: #1a1916;
     --color-ink-soft: #4c4c4c;
@@ -21,10 +21,7 @@
   }
   body {
     @apply font-sans antialiased text-ink-950;
-    background:
-      radial-gradient(900px 480px at 50% -10%, rgba(240, 112, 64, 0.06), transparent 60%),
-      radial-gradient(900px 480px at 100% 100%, rgba(0, 153, 255, 0.05), transparent 60%),
-      var(--color-bg);
+    background: var(--color-bg);
     overflow-x: hidden;
     font-feature-settings: "ss01", "ss02", "cv01", "cv11";
   }

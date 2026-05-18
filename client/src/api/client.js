@@ -31,6 +31,10 @@ export const api = {
   me: () => request('/api/auth/me'),
   devSignin: (email, name) =>
     request('/api/auth/dev-signin', { method: 'POST', body: JSON.stringify({ email, name }) }),
+  signup: (email, name, password) =>
+    request('/api/auth/signup', { method: 'POST', body: JSON.stringify({ email, name, password }) }),
+  login: (email, password) =>
+    request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
   logout: () => request('/api/auth/logout', { method: 'POST' }),
   googleSigninUrl: () => '/api/auth/google',
 
@@ -46,6 +50,11 @@ export const api = {
   adminListUsers: () => request('/api/admin/users'),
   adminApprove: (id) => request(`/api/admin/users/${id}/approve`, { method: 'POST' }),
   adminRevoke: (id) => request(`/api/admin/users/${id}/revoke`, { method: 'POST' }),
+  adminListPreapproved: () => request('/api/admin/preapproved'),
+  adminAddPreapproved: (email) =>
+    request('/api/admin/preapproved', { method: 'POST', body: JSON.stringify({ email }) }),
+  adminRemovePreapproved: (email) =>
+    request(`/api/admin/preapproved/${encodeURIComponent(email)}`, { method: 'DELETE' }),
 
   // --- core data ---
   getCv: () => request('/api/cv'),

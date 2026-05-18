@@ -18,8 +18,18 @@ export default function CVPanel({ cv }) {
         })
       : text;
 
+  // Outline-by-match: before analysis, mirror the JD card's spark-blue ring
+  // (signals "ready, paired with the JD"). After analysis, switch to the
+  // match palette — green/amber/red matching the keyword chip colors.
+  const score = result?.ats?.score;
+  const ringClass =
+    score == null ? 'ring-2 ring-spark-500/40' :
+    score >= 70 ? 'ring-2 ring-emerald-500/60' :
+    score >= 40 ? 'ring-2 ring-amber-500/60' :
+    'ring-2 ring-rose-500/60';
+
   return (
-    <div className="card-light p-7 min-h-[640px] relative overflow-hidden">
+    <div className={`card-light p-7 min-h-[640px] relative overflow-hidden transition-shadow ${ringClass}`}>
       <div className="absolute top-0 left-0 h-px w-32 bg-gradient-to-r from-peach-500/60 to-transparent" />
 
       <div className="flex items-baseline justify-between mb-6">

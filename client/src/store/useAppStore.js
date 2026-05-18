@@ -214,6 +214,23 @@ export const useAppStore = create((set, get) => ({
 
   signinDev: async (email, name) => {
     const { user } = await api.devSignin(email, name);
+    await get()._applySignInResult(user);
+  },
+
+  signinPassword: async (email, password) => {
+    const { user } = await api.login(email, password);
+    await get()._applySignInResult(user);
+  },
+
+  signupPassword: async (email, name, password) => {
+    const { user } = await api.signup(email, name, password);
+    await get()._applySignInResult(user);
+  },
+
+  // Shared post-sign-in plumbing — used by every successful auth path so
+  // the store state lands in a consistent shape regardless of how the user
+  // got in. Approved → authed + hydrate CV. Not approved → pending screen.
+  _applySignInResult: async (user) => {
     const isAdmin = Boolean(user?.isAdmin);
     if (!user?.isApproved) {
       set({ user, authStatus: 'pending', isAdmin });

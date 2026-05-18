@@ -35,12 +35,17 @@ export default function TopBar({ onOpenSettings }) {
 
       <div className="flex flex-col items-center text-center">
         <div className="flex items-center gap-3 mb-2">
-          <img
-            src="/logo.png"
-            alt=""
-            className="h-12 w-12 object-contain"
-            aria-hidden="true"
-          />
+          {/* Visual crop: the source image has whitespace around the mirror,
+              so we wrap in an overflow-hidden box and scale the img inside it
+              to zoom in on just the mirror itself. */}
+          <div className="h-20 w-20 overflow-hidden flex items-center justify-center">
+            <img
+              src="/logo1.png"
+              alt=""
+              className="w-full h-full object-contain scale-150"
+              aria-hidden="true"
+            />
+          </div>
           <div className="font-display text-3xl font-bold tracking-tight text-ink-950">
             CV Mirror <span className="accent-script text-4xl ml-0.5">AI</span>
           </div>

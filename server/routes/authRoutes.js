@@ -66,6 +66,60 @@ router.get('/google/callback', (req, res, next) => {
   })(req, res, next);
 });
 
+// Email + password signup. Gated by the preapproved_emails table — only
+// addresses the admin has whitelisted ahead of time can register. New users
+// are auto-approved (is_approved=1) since their email passed the gate.
+router.post('/signup', (req, res) => {
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const name = String(req.body?.name || '').trim();
+  const password = String(req.body?.password || '');
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return res.status(400).json({ error: 'Provide a valid email.' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
+  }
+  // Gate: only preapproved emails can sign up. Otherwise the URL would be a
+  // public signup form vulnerable to bot spam.
+  if (!userStore.isPreapproved(email)) {
+    return res.status(403).json({
+      error: 'Sign-up is invitation-only. Ask the admin to add your email first.',
+      code: 'EMAIL_NOT_PREAPPROVED',
+    });
+  }
+  // Prevent duplicate signup. If a Google account already exists for this
+  // email, the user should sign in with Google instead (or contact admin).
+  if (userStore.findByEmail(email)) {
+    return res.status(409).json({
+      error: 'An account with that email already exists. Try signing in instead.',
+      code: 'EMAIL_EXISTS',
+    });
+  }
+  const user = userStore.createPasswordUser({ email, name, password });
+  req.login(user, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ user: publicUser(user) });
+  });
+});
+
+// Email + password sign-in.
+router.post('/login', (req, res) => {
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  const password = String(req.body?.password || '');
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password required.' });
+  }
+  const user = userStore.verifyPassword({ email, password });
+  if (!user) {
+    // Generic message — don't reveal whether the email exists.
+    return res.status(401).json({ error: 'Invalid email or password.' });
+  }
+  req.login(user, (err) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ user: publicUser(user) });
+  });
+});
+
 router.post('/dev-signin', (req, res) => {
   if (process.env.AUTH_PROVIDER === 'google') {
     return res.status(400).json({ error: 'Dev sign-in disabled when AUTH_PROVIDER=google.' });

@@ -34,6 +34,7 @@ db.exec(`
     name                        TEXT,
     picture                     TEXT,
     openai_api_key_encrypted    TEXT,
+    password_hash               TEXT,
     target_market               TEXT NOT NULL DEFAULT 'global',
     template                    TEXT,
     onboarded_at                INTEGER,
@@ -54,6 +55,15 @@ db.exec(`
     result_json TEXT NOT NULL,
     updated_at  INTEGER NOT NULL DEFAULT (unixepoch())
   );
+
+  -- Emails the admin has pre-approved. When someone signs up (Google OR
+  -- email+password) with one of these addresses, their user row is created
+  -- with is_approved=1 immediately, skipping the "waiting for approval" gate.
+  CREATE TABLE IF NOT EXISTS preapproved_emails (
+    email             TEXT PRIMARY KEY,
+    added_by_user_id  INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    added_at          INTEGER NOT NULL DEFAULT (unixepoch())
+  );
 `);
 
 // Idempotent column migrations — if the DB was created before is_admin /
@@ -66,6 +76,9 @@ db.exec(`
   }
   if (!cols.includes('is_approved')) {
     db.exec('ALTER TABLE users ADD COLUMN is_approved INTEGER NOT NULL DEFAULT 0');
+  }
+  if (!cols.includes('password_hash')) {
+    db.exec('ALTER TABLE users ADD COLUMN password_hash TEXT');
   }
 })();
 

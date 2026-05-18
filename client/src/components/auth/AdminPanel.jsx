@@ -7,17 +7,23 @@ import { api } from '../../api/client.js';
 export default function AdminPanel({ onClose }) {
   const [pending, setPending] = useState([]);
   const [approved, setApproved] = useState([]);
+  const [preapproved, setPreapproved] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-  const [busy, setBusy] = useState(null); // id of the row currently being mutated
+  const [busy, setBusy] = useState(null); // id (or email) of the row being mutated
+  const [newEmail, setNewEmail] = useState('');
 
   async function refresh() {
     setLoading(true);
     setErr(null);
     try {
-      const out = await api.adminListUsers();
-      setPending(out.pending || []);
-      setApproved(out.approved || []);
+      const [users, pre] = await Promise.all([
+        api.adminListUsers(),
+        api.adminListPreapproved(),
+      ]);
+      setPending(users.pending || []);
+      setApproved(users.approved || []);
+      setPreapproved(pre.emails || []);
     } catch (e) {
       setErr(e.message || 'Failed to load users.');
     } finally {
@@ -26,6 +32,33 @@ export default function AdminPanel({ onClose }) {
   }
 
   useEffect(() => { refresh(); }, []);
+
+  async function addPreapproved() {
+    const email = newEmail.trim().toLowerCase();
+    if (!email) return;
+    setBusy(`add:${email}`);
+    try {
+      await api.adminAddPreapproved(email);
+      setNewEmail('');
+      await refresh();
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function removePreapproved(email) {
+    setBusy(`rm:${email}`);
+    try {
+      await api.adminRemovePreapproved(email);
+      await refresh();
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function approve(id) {
     setBusy(id);
@@ -86,6 +119,53 @@ export default function AdminPanel({ onClose }) {
                     className="btn-accent text-xs px-3 py-1"
                   >
                     {busy === u.id ? '…' : 'Approve'}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="mb-6">
+          <h3 className="text-sm font-semibold text-ink-950 mb-1">
+            Pre-approved emails <span className="text-ink-400 text-xs font-normal">({preapproved.length})</span>
+          </h3>
+          <p className="text-[11px] text-ink-500 mb-3 leading-relaxed">
+            Anyone in this list can sign up with email + password (no waiting
+            room), or Google-sign-in straight into the app.
+          </p>
+
+          <div className="flex gap-2 mb-3">
+            <input
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addPreapproved(); } }}
+              placeholder="email@example.com"
+              className="input-light flex-1"
+            />
+            <button
+              onClick={addPreapproved}
+              disabled={!newEmail.trim() || busy?.startsWith('add:')}
+              className="btn-primary text-xs px-3"
+            >
+              {busy?.startsWith('add:') ? '…' : 'Add'}
+            </button>
+          </div>
+
+          {preapproved.length === 0 ? (
+            <div className="text-xs text-ink-400 italic">No pre-approved emails yet.</div>
+          ) : (
+            <ul className="divide-y divide-cream-200 rounded-xl border border-cream-200 overflow-hidden">
+              {preapproved.map((p) => (
+                <li key={p.email} className="flex items-center justify-between gap-3 p-2.5 bg-white">
+                  <div className="text-ink-950 truncate font-mono text-xs">{p.email}</div>
+                  <button
+                    onClick={() => removePreapproved(p.email)}
+                    disabled={busy === `rm:${p.email}`}
+                    className="text-xs text-rose-600 hover:underline whitespace-nowrap"
+                  >
+                    {busy === `rm:${p.email}` ? '…' : 'Remove'}
                   </button>
                 </li>
               ))}

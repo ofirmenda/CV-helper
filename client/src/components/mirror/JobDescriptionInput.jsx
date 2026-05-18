@@ -33,7 +33,7 @@ export default function JobDescriptionInput() {
   const showHighlighted = keywords.length > 0 && jd;
 
   return (
-    <div className="card p-7 min-h-[640px] relative overflow-hidden">
+    <div className="card p-7 min-h-[640px] relative overflow-hidden ring-2 ring-spark-500/40 transition-shadow">
       <div className="absolute top-0 right-0 h-px w-32 bg-gradient-to-l from-spark-500/60 to-transparent" />
 
       <div className="flex items-baseline justify-between mb-5">

@@ -37,6 +37,7 @@ router.put('/', (req, res) => {
 });
 
 router.post('/upload', upload.single('file'), async (req, res, next) => {
+  console.log('[upload] start — user=', req.user?.id, 'file=', req.file?.originalname, 'mime=', req.file?.mimetype, 'size=', req.file?.size);
   if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
   const tmpPath = req.file.path;
   try {
@@ -44,10 +45,15 @@ router.post('/upload', upload.single('file'), async (req, res, next) => {
     const u = userStore.findById(req.user.id);
     const targetMarket =
       req.body?.targetMarket || req.query?.targetMarket || u?.target_market || 'global';
-    const { cv } = await extractCvFromFile(tmpPath, req.file.mimetype, { targetMarket });
+    console.log('[upload] step: extract from file (market=', targetMarket, ')');
+    const { cv, usedAi } = await extractCvFromFile(tmpPath, req.file.mimetype, { targetMarket });
+    console.log('[upload] step: extracted (usedAi=', usedAi, ')');
     userStore.saveCv(req.user.id, cv);
+    console.log('[upload] step: saved to db');
     res.json({ cv });
+    console.log('[upload] done');
   } catch (err) {
+    console.error('[upload] crashed:', err);
     next(err);
   } finally {
     fs.unlink(tmpPath).catch(() => {});

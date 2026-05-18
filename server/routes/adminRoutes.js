@@ -44,6 +44,30 @@ router.post('/users/:id/approve', (req, res) => {
   res.json({ ok: true });
 });
 
+// --- Pre-approved email allowlist ---
+// Emails here can sign up via /api/auth/signup without admin approval
+// afterwards, and Google sign-ins from these addresses skip the waiting room.
+
+router.get('/preapproved', (_req, res) => {
+  res.json({ emails: userStore.listPreapprovedEmails() });
+});
+
+router.post('/preapproved', (req, res) => {
+  const email = String(req.body?.email || '').trim().toLowerCase();
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return res.status(400).json({ error: 'Provide a valid email.' });
+  }
+  userStore.addPreapprovedEmail(email, req.user.id);
+  res.json({ ok: true });
+});
+
+router.delete('/preapproved/:email', (req, res) => {
+  const email = String(req.params.email || '').trim().toLowerCase();
+  if (!email) return res.status(400).json({ error: 'Provide an email.' });
+  userStore.removePreapprovedEmail(email);
+  res.json({ ok: true });
+});
+
 router.post('/users/:id/revoke', (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id < 1) {

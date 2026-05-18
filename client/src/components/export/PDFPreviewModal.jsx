@@ -13,6 +13,7 @@ export default function PDFPreviewModal({ onClose }) {
   const result = useAppStore((s) => s.result);
   const chosenTemplate = useAppStore((s) => s.template);
   const setChosenTemplate = useAppStore((s) => s.setTemplate);
+  const resetForNewJob = useAppStore((s) => s.resetForNewJob);
   const [template, setTemplate] = useState(chosenTemplate || TEMPLATES[0].id);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -22,6 +23,9 @@ export default function PDFPreviewModal({ onClose }) {
   const [onePage, setOnePage] = useState(targetMarket === 'israel');
   const [atsView, setAtsView] = useState(false);
   const [error, setError] = useState(null);
+  // Goes true after a successful download, so we can prompt the user to fit
+  // the CV to a new job rather than leaving them stranded on the old one.
+  const [downloaded, setDownloaded] = useState(false);
 
   // Compute the target CV from a stable signature (JSON), so the effect below
   // doesn't fire on every render due to a new object reference.
@@ -89,9 +93,17 @@ export default function PDFPreviewModal({ onClose }) {
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
+      // Only prompt "fit to another job" when there's actually a tailored result
+      // — pure base-CV exports don't have a JD to reset.
+      if (result) setDownloaded(true);
     } catch (e) {
       setError(e.message);
     }
+  }
+
+  function startNewJob() {
+    resetForNewJob();
+    onClose?.();
   }
 
   return (
@@ -180,6 +192,26 @@ export default function PDFPreviewModal({ onClose }) {
               />
             </div>
           </details>
+        )}
+
+        {downloaded && (
+          <div className="px-5 py-3 border-b border-cream-200 bg-emerald-50/70 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm text-emerald-800">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12l5 5L20 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="font-semibold">PDF downloaded.</span>
+              <span className="text-emerald-700">Want to tailor this CV to a different role?</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button className="btn-ghost text-xs" onClick={() => setDownloaded(false)}>
+                Stay on this one
+              </button>
+              <button className="btn-accent text-xs" onClick={startNewJob}>
+                Fit to another job →
+              </button>
+            </div>
+          </div>
         )}
 
         <div className="flex-1 p-5 overflow-hidden bg-cream-100/40">

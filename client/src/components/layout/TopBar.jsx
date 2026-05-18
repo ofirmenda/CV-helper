@@ -35,12 +35,12 @@ export default function TopBar({ onOpenSettings }) {
 
       <div className="flex flex-col items-center text-center">
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-10 w-10 rounded-xl bg-ink-950 grid place-items-center">
-            <svg viewBox="0 0 24 24" className="h-5 w-5 text-cream-50" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M8 12h8M12 8v8" strokeLinecap="round" />
-            </svg>
-          </div>
+          <img
+            src="/logo.png"
+            alt=""
+            className="h-12 w-12 object-contain"
+            aria-hidden="true"
+          />
           <div className="font-display text-3xl font-bold tracking-tight text-ink-950">
             CV Mirror <span className="accent-script text-4xl ml-0.5">AI</span>
           </div>

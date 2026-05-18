@@ -267,6 +267,22 @@ export const useAppStore = create((set, get) => ({
     }
   },
 
+  // Clear everything tied to the previous job (JD, keywords, sections,
+  // critique, approvals) and bounce back to Mirror mode. The base CV stays.
+  // Called from the post-export banner so the user can fit to a new role
+  // without having to manually wipe state.
+  resetForNewJob: () => set({
+    jd: '',
+    result: null,
+    approvals: emptyApprovals(),
+    critique: null,
+    critiqueStatus: 'idle',
+    critiqueError: null,
+    currentSectionIndex: 0,
+    mode: 'mirror',
+    error: null,
+  }),
+
   saveCv: async () => {
     const cv = get().cv;
     if (!cv) return;

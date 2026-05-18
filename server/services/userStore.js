@@ -4,7 +4,7 @@
 
 import db from '../db/init.js';
 import { encryptSecret, decryptSecret } from './cryptoStore.js';
-import { seedCv } from '../data/seed.js';
+import { seedCv } from './seed.js';
 
 function adminEmail() {
   return (process.env.ADMIN_EMAIL || '').toLowerCase().trim();

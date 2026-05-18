@@ -121,7 +121,7 @@ server/
 │   ├── template-modern.{html,css}  # left-sidebar
 │   └── template-classic.{html,css} # right-sidebar
 └── data/
-    ├── seed.js                     # default CV + sample JD
+    └── (runtime only — see services/seed.js for the starter CV)
     ├── cv_base.json                # generated on first run
     └── latest_result.json          # cached last analysis
 

@@ -187,30 +187,18 @@ screen — open Settings → Manage user access → Approve.
 
 ---
 
-## 5. (Optional) Switch to Google OAuth
+## 5. Switch to Google OAuth (strongly recommended before sharing the URL)
 
-Dev sign-in works but anyone with an email can request access. To require
-Google sign-in:
+Dev sign-in is BLOCKED in production by default — so out of the box, nobody
+can sign in until you do one of:
 
-### a. Create OAuth credentials in Google Cloud Console
-
-1. Go to https://console.cloud.google.com → APIs & Services → Credentials.
-2. Click **Create Credentials → OAuth client ID**.
-3. Application type: **Web application**.
-4. Authorized redirect URIs: `https://<your-app-name>.fly.dev/api/auth/google/callback`
-5. Copy the Client ID and Client Secret.
-
-### b. Push them to Fly
-
-```bash
-fly secrets set \
-  AUTH_PROVIDER=google \
-  GOOGLE_CLIENT_ID="<id>" \
-  GOOGLE_CLIENT_SECRET="<secret>" \
-  GOOGLE_CALLBACK_URL="https://<your-app-name>.fly.dev/api/auth/google/callback"
-```
-
-Fly auto-restarts the app when secrets change.
+- **(Recommended)** configure Google OAuth — see the full walkthrough in
+  [docs/GOOGLE_OAUTH.md](docs/GOOGLE_OAUTH.md). 15 minutes, no code changes,
+  real auth.
+- **(Temporary, for smoke-testing the deploy)** set
+  `fly secrets set ALLOW_DEV_SIGNIN_IN_PROD=true`. Turn it off
+  (`fly secrets unset ALLOW_DEV_SIGNIN_IN_PROD`) the moment you finish
+  testing.
 
 ---
 

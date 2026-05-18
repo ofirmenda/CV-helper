@@ -1,0 +1,18 @@
+{
+  "name": "cv-mirror-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CV Mirror AI — split-screen JD vs CV with animated connections, section-by-section approval wizard, ATS analysis, and PDF export.",
+  "scripts": {
+    "predev": "node scripts/free-port.mjs 4000 5173",
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "free-port": "node scripts/free-port.mjs 4000 5173",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}

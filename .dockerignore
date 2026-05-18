@@ -1,0 +1,29 @@
+# Trim the build context so `fly deploy` doesn't upload 500MB of dev junk.
+**/node_modules
+**/dist
+**/.vite
+**/.cache
+**/coverage
+**/.DS_Store
+
+# Local persistence — only the volume on Fly should have these.
+server/data
+server/uploads
+server/cv_base.json
+server/latest_result.json
+
+# Secrets — set via `fly secrets set` instead.
+server/.env
+server/.env.*
+client/.env
+client/.env.*
+
+# Local plans / scratch / IDE
+.claude
+.vscode
+.idea
+*.log
+README.md
+research.txt
+.git
+.gitignore

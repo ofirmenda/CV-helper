@@ -1,0 +1,28 @@
+node_modules/
+dist/
+
+# Env files in any subdir — never commit secrets.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local persistence — SQLite DB, sessions DB, multer temp files,
+# and the legacy single-user JSON files.
+server/data/
+server/uploads/
+server/cv_base.json
+server/latest_result.json
+
+# Logs / OS / IDE
+*.log
+.DS_Store
+.vscode/
+.idea/
+.claude/
+
+# Build / cache
+.cache/
+.vite/

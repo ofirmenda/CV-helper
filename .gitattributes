@@ -1,0 +1,33 @@
+# Normalize all text files to LF in the repo. On checkout, Windows can
+# convert to CRLF locally (`core.autocrlf=true`) — that's a per-machine
+# preference, but the canonical form on disk is LF. This silences the
+# noisy "LF will be replaced by CRLF" warnings on Windows.
+
+* text=auto eol=lf
+
+# Always-binary file types — never touch line endings on these.
+*.pdf       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.woff      binary
+*.woff2     binary
+*.ttf       binary
+*.otf       binary
+*.eot       binary
+*.zip       binary
+*.gz        binary
+*.tar       binary
+*.docx      binary
+*.db        binary
+*.db-shm    binary
+*.db-wal    binary
+
+# Shell scripts must keep LF endings even on Windows checkouts —
+# CRLF would break shebangs inside Docker / Linux deploys.
+*.sh        text eol=lf
+*.mjs       text eol=lf
+Dockerfile  text eol=lf
+*.toml      text eol=lf

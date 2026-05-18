@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #f5f4f0;
+    --color-surface: #ffffff;
+    --color-ink: #1a1916;
+    --color-ink-soft: #4c4c4c;
+    --color-ink-muted: #9a9690;
+    --color-border: #e8e4dc;
+    --color-accent: #0099ff;
+    --color-warm: #f07040;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply font-sans antialiased text-ink-950;
+    background:
+      radial-gradient(900px 480px at 50% -10%, rgba(240, 112, 64, 0.06), transparent 60%),
+      radial-gradient(900px 480px at 100% 100%, rgba(0, 153, 255, 0.05), transparent 60%),
+      var(--color-bg);
+    overflow-x: hidden;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv11";
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(26, 25, 22, 0.10); border-radius: 8px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(26, 25, 22, 0.18); }
+
+  ::selection { background: rgba(240, 112, 64, 0.25); color: var(--color-ink); }
+}
+
+@layer components {
+  /* Card surfaces */
+  .card {
+    @apply rounded-2xl border border-cream-200 bg-white shadow-soft;
+  }
+  .card-dark {
+    @apply rounded-2xl border border-ink-700/40 bg-ink-950 text-cream-50 shadow-soft;
+  }
+  .card-light {
+    @apply rounded-2xl border border-cream-200 bg-white text-ink-950 shadow-card;
+  }
+  .card-cream {
+    @apply rounded-2xl border border-cream-200 bg-cream-50 text-ink-950 shadow-soft;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink-950 px-5 py-2.5 text-sm font-medium text-cream-50 transition
+           hover:bg-ink-900 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-peach-500 px-5 py-2.5 text-sm font-semibold text-white transition
+           hover:bg-peach-600 shadow-glowPeach active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-spark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-spark-500 px-5 py-2.5 text-sm font-semibold text-white transition
+           hover:bg-spark-600 shadow-glow active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-cream-200 bg-white/70 px-4 py-2 text-sm font-medium text-ink-950 transition
+           hover:bg-white hover:border-cream-300 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-cream-50/15 bg-cream-50/5 px-4 py-2 text-sm font-medium text-cream-50 transition
+           hover:bg-cream-50/10 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Chips for keywords */
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all;
+  }
+  .chip-match {
+    @apply border-emerald-400/60 bg-emerald-50 text-emerald-700;
+  }
+  .chip-partial {
+    @apply border-amber-300/70 bg-amber-50 text-amber-700;
+  }
+  .chip-miss {
+    @apply border-rose-300/70 bg-rose-50 text-rose-600;
+  }
+  .chip-match-dark {
+    @apply border-emerald-400/40 bg-emerald-400/15 text-emerald-200;
+  }
+  .chip-partial-dark {
+    @apply border-amber-300/40 bg-amber-300/15 text-amber-100;
+  }
+  .chip-miss-dark {
+    @apply border-rose-400/40 bg-rose-400/15 text-rose-200;
+  }
+
+  /* Inputs */
+  .input-dark {
+    @apply w-full rounded-xl border border-cream-50/10 bg-cream-50/[0.04] px-3 py-2 text-sm text-cream-50 placeholder:text-cream-50/40
+           focus:border-spark-500/60 focus:outline-none focus:ring-2 focus:ring-spark-500/20;
+  }
+  .input-light {
+    @apply w-full rounded-xl border border-cream-200 bg-white px-3 py-2 text-sm text-ink-950 placeholder:text-ink-400
+           focus:border-spark-500 focus:outline-none focus:ring-2 focus:ring-spark-500/20;
+  }
+
+  /* Keyword highlight in JD text */
+  /* Inline keyword marks shared by JD pane + CV pane. The same word lights up on both sides. */
+  .kw-mark {
+    background: transparent;
+    color: inherit;
+    padding: 0 2px;
+    border-radius: 3px;
+    transition: background 0.18s ease, box-shadow 0.18s ease;
+    cursor: pointer;
+  }
+  .kw-mark.kw-match {
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.16), rgba(34, 197, 94, 0.10));
+    border-bottom: 1.5px solid rgba(34, 197, 94, 0.55);
+  }
+  .kw-mark.kw-partial {
+    background: linear-gradient(180deg, rgba(234, 179, 8, 0.18), rgba(234, 179, 8, 0.10));
+    border-bottom: 1.5px solid rgba(234, 179, 8, 0.55);
+  }
+  .kw-mark.kw-miss {
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.16), rgba(239, 68, 68, 0.08));
+    border-bottom: 1.5px solid rgba(239, 68, 68, 0.45);
+  }
+  .kw-mark.kw-hover {
+    box-shadow: 0 0 0 2px rgba(26, 25, 22, 0.18);
+    animation: kw-pulse 0.6s ease-in-out;
+  }
+  @keyframes kw-pulse {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+
+  /* Diff highlights */
+  .diff-add {
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+  .diff-del {
+    background: rgba(239, 68, 68, 0.12);
+    color: #b91c1c;
+    text-decoration: line-through;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+
+  /* Accent script (for occasional flourishes) */
+  .accent-script {
+    @apply font-accent text-peach-500;
+  }
+}

@@ -41,12 +41,27 @@ router.get('/google', (req, res, next) => {
   passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
 });
 
+// Where to bounce the user back to after a successful (or failed) Google
+// login. In production we serve the SPA from the same origin, so "/" is fine.
+// In dev the SPA is on Vite (port 5173) and we're on the API server (port
+// 4000) — redirecting to "/" would 404. POST_AUTH_REDIRECT_URL lets us
+// override this; falls back to a sensible per-env default.
+function postAuthUrl(suffix = '') {
+  if (process.env.POST_AUTH_REDIRECT_URL) {
+    return process.env.POST_AUTH_REDIRECT_URL.replace(/\/$/, '') + (suffix || '/');
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    return 'http://localhost:5173' + (suffix || '/');
+  }
+  return suffix || '/';
+}
+
 router.get('/google/callback', (req, res, next) => {
-  passport.authenticate('google', { failureRedirect: '/?auth=failed' }, (err, user) => {
-    if (err || !user) return res.redirect('/?auth=failed');
+  passport.authenticate('google', { failureRedirect: postAuthUrl('/?auth=failed') }, (err, user) => {
+    if (err || !user) return res.redirect(postAuthUrl('/?auth=failed'));
     req.login(user, (loginErr) => {
-      if (loginErr) return res.redirect('/?auth=failed');
-      res.redirect('/');
+      if (loginErr) return res.redirect(postAuthUrl('/?auth=failed'));
+      res.redirect(postAuthUrl());
     });
   })(req, res, next);
 });

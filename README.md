@@ -20,14 +20,12 @@ the admin controls who's in.
 
 A horizontal **stepper** along the top frames the whole experience: pick a
 template, upload your CV (or use the seed), paste a job description, run the
-analysis, review, and export. The mirror logo + your account pill sit at
-opposite ends — minimal chrome, lots of breathing room.
+analysis, review, and export.
 
 ### 2. Mirror — analyze your CV against the JD
 
 ![Mirror view after analyze](client/public/2mirrorafteranalyze.png)
 
-Side-by-side panels of **equal width**, joined by a center match-score ring.
 Pasted JD keywords are colored by status —
 <span style="color:#10b981">**green** for matched</span>,
 <span style="color:#f59e0b">**amber** for partial</span>,

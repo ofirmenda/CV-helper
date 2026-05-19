@@ -297,5 +297,3 @@ Open `http://localhost:5173`. Sign in with the email you set as
 ## Deploying
 
 See [DEPLOY.md](DEPLOY.md) for the full walkthrough to host this on Fly.io
-(~$3–5/month, persistent SQLite volume, auto-deploy from GitHub on push).
-The local-run instructions above are all you need for development.
